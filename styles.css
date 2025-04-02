@@ -1,0 +1,177 @@
+/* ==============================================
+   Global Styles
+   ============================================== */
+
+   .root {
+    /* Set the default font family and background color for the application */
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-background-color: #f5f7fa;
+}
+
+/* ==============================================
+   Custom Scroll Pane Styles
+   ============================================== */
+
+.custom-scroll-pane {
+    /* Make the scroll pane background and border transparent */
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.custom-scroll-pane > .viewport {
+    /* Make the viewport background transparent */
+    -fx-background-color: transparent;
+}
+
+/* ==============================================
+   Custom Text Field Styles
+   ============================================== */
+
+.custom-text-field {
+    /* Style the text field with a light gray background and border */
+    -fx-background-color: #f8f9f9;
+    -fx-border-color: #ddd;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-padding: 7;
+}
+
+.custom-text-field:focused {
+    /* Change the text field's background and border color when focused */
+    -fx-background-color: white;
+    -fx-border-color: #3498db;
+}
+
+/* ==============================================
+   Custom Spinner Styles
+   ============================================== */
+
+.custom-spinner {
+    /* Style the spinner with a light gray background and border */
+    -fx-background-color: #f8f9f9;
+    -fx-border-color: #ddd;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+}
+
+.custom-spinner:focused {
+    /* Change the spinner's border color when focused */
+    -fx-border-color: #3498db;
+}
+
+.custom-spinner .increment-arrow-button,
+.custom-spinner .decrement-arrow-button {
+    /* Style the increment and decrement buttons */
+    -fx-background-color: #ecf0f1;
+    -fx-border-color: #ddd;
+}
+
+.custom-spinner .increment-arrow-button:hover,
+.custom-spinner .decrement-arrow-button:hover {
+    /* Change the button's background color on hover */
+    -fx-background-color: #3498db;
+}
+
+.custom-spinner .increment-arrow-button:hover .increment-arrow,
+.custom-spinner .decrement-arrow-button:hover .decrement-arrow {
+    /* Change the arrow color on hover */
+    -fx-background-color: white;
+}
+
+/* ==============================================
+   Custom Radio Button Styles
+   ============================================== */
+
+.custom-radio .radio {
+    /* Style the radio button with a white background and gray border */
+    -fx-border-color: #ddd;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-background-color: white;
+}
+
+.custom-radio:selected .radio {
+    /* Change the radio button's border color when selected */
+    -fx-border-color: #3498db;
+    -fx-background-color: white;
+}
+
+.custom-radio:selected .radio .dot {
+    /* Change the dot color when selected */
+    -fx-background-color: #3498db;
+}
+
+/* ==============================================
+   Custom Tab Pane Styles
+   ============================================== */
+
+.custom-tab-pane > .tab-header-area > .headers-region > .tab {
+    /* Style the tab with a light gray background and border */
+    -fx-background-color: #ecf0f1;
+    -fx-border-color: #ddd;
+    -fx-background-radius: 5 5 0 0;
+    -fx-border-radius: 5 5 0 0;
+    -fx-padding: 8 15;
+}
+
+.custom-tab-pane > .tab-header-area > .headers-region > .tab:selected {
+    /* Change the tab's background and border color when selected */
+    -fx-background-color: white;
+    -fx-border-color: #ddd #ddd white #ddd;
+}
+
+.custom-tab-pane > .tab-header-area > .tab-header-background {
+    /* Style the tab header background */
+    -fx-background-color: #ddd;
+}
+
+.custom-tab-pane > .tab-content-area {
+    /* Style the tab content area */
+    -fx-background-color: white;
+    -fx-border-color: #ddd;
+    -fx-border-width: 0 1 1 1;
+}
+
+/* ==============================================
+   Button Styles
+   ============================================== */
+
+.add-button:hover {
+    /* Change the add button's background color on hover */
+    -fx-background-color: #2980b9;
+}
+
+.generate-button:hover {
+    /* Change the generate button's background color on hover */
+    -fx-background-color: #16a085;
+}
+
+/* ==============================================
+   Alert Dialog Styles
+   ============================================== */
+
+.custom-alert {
+    /* Style the alert dialog with a white background */
+    -fx-background-color: white;
+}
+
+.custom-alert > *.button-bar > *.container {
+    /* Style the button bar container */
+    -fx-background-color: white;
+}
+
+.custom-alert > *.label.content {
+    /* Style the content label */
+    -fx-font-size: 14px;
+}
+
+.custom-alert > *.header-panel {
+    /* Style the header panel */
+    -fx-background-color: #f8f9f9;
+}
+
+.custom-alert > *.header-panel *.label {
+    /* Style the header label */
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}

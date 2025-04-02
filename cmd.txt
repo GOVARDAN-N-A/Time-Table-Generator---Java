@@ -1,0 +1,5 @@
+ javac --module-path "C:/Users/GOVARDAN/AppData/Local/Programs/Eclipse Adoptium/javafx-sdk-21.0.6/lib" --add-modules javafx.controls,javafx.fxml -cp ".;lib/*" TimeTableGeneratorUI.java
+>> 
+
+PS D:\LastDanceOfProject\TimeTableGenerator> java --module-path "C:/Users/GOVARDAN/AppData/Local/Programs/Eclipse Adoptium/javafx-sdk-21.0.6/lib" --add-modules javafx.controls,javafx.fxml -cp ".;lib/*" TimeTableGeneratorUI      
+>> 
