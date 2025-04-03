@@ -14,6 +14,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.effect.DropShadow;
 // import javafx.scene.image.Image;
 // import javafx.scene.image.ImageView;
+import javafx.print.*; // <-- Import Printer API
+import javafx.stage.Window; // <-- Import Window for print dialog owner
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -108,36 +110,23 @@ public class TimeTableGeneratorUI extends Application {
         mainLayout.setBottom(createFooter());
 
         SplitPane splitPane = new SplitPane();
-
-        // --- Input Side (Left) ---
         ScrollPane inputScrollPane = new ScrollPane(createInputSection());
-        inputScrollPane.setFitToWidth(true); // Fit content width to scrollpane width
+        inputScrollPane.setFitToWidth(true);
         inputScrollPane.getStyleClass().add("custom-scroll-pane");
-        // Optional: Set scrollbar policies if needed, AS_NEEDED is default
-        // inputScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // Example: Never show horizontal
-        // inputScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
-        // --- Output Side (Right) ---
         ScrollPane outputScrollPane = new ScrollPane(createOutputSection());
-        outputScrollPane.setFitToWidth(true); // Fit content width to scrollpane width
-
-        // *** KEY CHANGE: Do NOT fit content height to scrollpane height ***
-        // outputScrollPane.setFitToHeight(true); // REMOVE or set to false
-        outputScrollPane.setFitToHeight(false); // Explicitly set to false (optional, default is false)
-
+        outputScrollPane.setFitToWidth(true);
+        outputScrollPane.setFitToHeight(false); // Allow vertical scrolling
         outputScrollPane.getStyleClass().add("custom-scroll-pane");
-        // Set scrollbar policies (AS_NEEDED is default, but good to be explicit)
-        outputScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED); // Show horizontal only if needed
-        outputScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED); // Show vertical only if needed
+        outputScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        outputScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
-
-        // --- Add panes to SplitPane ---
         splitPane.getItems().addAll(inputScrollPane, outputScrollPane);
-        splitPane.setDividerPositions(0.42); // Adjust divider position as needed
+        splitPane.setDividerPositions(0.42);
 
         mainLayout.setCenter(splitPane);
 
-        Scene scene = new Scene(mainLayout, 1450, 800); // Adjust size as needed
+        Scene scene = new Scene(mainLayout, 1450, 800);
 
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -289,12 +278,13 @@ public class TimeTableGeneratorUI extends Application {
 
         // Create content for Section A Tab, including the summary table
         sectionASummaryTable = createSubjectSummaryTable();
-        sectionATab = new Tab("Section A");
+        Tab sectionATab = new Tab("Section A");
+        // Pass the Tab itself so the content knows its owner window for printing dialog
         sectionATab.setContent(createTimetableTabContent("Section A", sectionAGrid = createEmptyTimetableGrid(), sectionAFitness = new Label("Fitness: N/A"), sectionASummaryTable));
 
         // Create content for Section B Tab, including the summary table
         sectionBSummaryTable = createSubjectSummaryTable();
-        sectionBTab = new Tab("Section B");
+        Tab sectionBTab = new Tab("Section B");
         sectionBTab.setContent(createTimetableTabContent("Section B", sectionBGrid = createEmptyTimetableGrid(), sectionBFitness = new Label("Fitness: N/A"), sectionBSummaryTable));
 
         resultTabs.getTabs().addAll(sectionATab, sectionBTab);
@@ -306,32 +296,45 @@ public class TimeTableGeneratorUI extends Application {
 
     // Modified to include the summary table in the layout
     private Node createTimetableTabContent(String sectionName, GridPane grid, Label fitnessLabel, TableView<SubjectSummary> summaryTable) {
-        VBox container = new VBox(20); // Increased spacing for table
+        VBox container = new VBox(15); // Main container for the tab content
         container.setPadding(new Insets(25));
         container.setStyle("-fx-background-color: white;");
 
+        // --- Top Section: Title and Legend ---
         Label titleLabel = new Label(sectionName + " Timetable");
         titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 22));
         titleLabel.setTextFill(Color.web(PRIMARY_COLOR));
-
         HBox legend = createLegend();
+        VBox titleAndLegendBox = new VBox(10, titleLabel, legend);
 
+        // --- Middle Section: Grid and Controls (Fitness & Print) ---
         fitnessLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         fitnessLabel.setTextFill(Color.web(TEXT_COLOR));
-        HBox fitnessBox = new HBox(fitnessLabel);
-        fitnessBox.setAlignment(Pos.CENTER_RIGHT);
-        // fitnessBox.setPadding(new Insets(10, 0, 0, 0)); // Padding moved to VBox spacing
 
-        // Add Subject Summary Title
+        // Create Print Button
+        Button printButton = new Button("Print");
+        printButton.setStyle("-fx-background-color: " + SECONDARY_COLOR + "; -fx-text-fill: white; -fx-font-weight: bold;");
+        printButton.setCursor(javafx.scene.Cursor.HAND);
+        printButton.setOnAction(e -> printNode(container)); // Print the whole VBox container
+
+        // Layout for Fitness and Print Button
+        Region spacer = new Region(); // Pushes fitness left, print right
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        HBox controlsBox = new HBox(15, fitnessLabel, spacer, printButton);
+        controlsBox.setAlignment(Pos.CENTER_LEFT);
+        controlsBox.setPadding(new Insets(5, 0, 5, 0)); // Add some padding
+
+        // --- Bottom Section: Summary Table ---
         Label summaryTitleLabel = new Label("Subject & Staff Summary");
         summaryTitleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
         summaryTitleLabel.setTextFill(Color.web(PRIMARY_COLOR));
-        summaryTitleLabel.setPadding(new Insets(15, 0, 5, 0)); // Padding above title
+        summaryTitleLabel.setPadding(new Insets(10, 0, 5, 0));
 
-        // Add components to the VBox
-        container.getChildren().addAll(titleLabel, legend, grid, fitnessBox, summaryTitleLabel, summaryTable);
+        // Add all components to the main VBox container
+        container.getChildren().addAll(titleAndLegendBox, grid, controlsBox, summaryTitleLabel, summaryTable);
         return container;
     }
+
 
     // Creates the structure of the summary TableView
     private TableView<SubjectSummary> createSubjectSummaryTable() {
@@ -374,6 +377,74 @@ public class TimeTableGeneratorUI extends Application {
         return table;
     }
 
+    private void printNode(Node nodeToPrint) {
+        PrinterJob job = PrinterJob.createPrinterJob();
+        if (job == null) {
+            showAlert("Printing Error", "Could not create a printer job. Check system printer configuration.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        // Get the owner window for the print dialog
+        Window owner = null;
+        if (nodeToPrint != null && nodeToPrint.getScene() != null) {
+            owner = nodeToPrint.getScene().getWindow();
+        }
+
+        boolean proceed = job.showPrintDialog(owner);
+
+        if (proceed) {
+            // Optional: Set Page Layout (e.g., Landscape)
+             Printer printer = job.getPrinter();
+             // Consider Landscape might fit the timetable better
+             PageLayout pageLayout = printer.createPageLayout(Paper.A4, PageOrientation.LANDSCAPE, Printer.MarginType.DEFAULT);
+
+             // --- Scaling Logic (Simple: Scale node to fit page width) ---
+             double scaleX = 1.0;
+             double scaleY = 1.0;
+             if (pageLayout != null) {
+                 double pgWidth = pageLayout.getPrintableWidth();
+                 double pgHeight = pageLayout.getPrintableHeight();
+                 double nodeWidth = nodeToPrint.getBoundsInParent().getWidth();
+                 double nodeHeight = nodeToPrint.getBoundsInParent().getHeight();
+
+                 scaleX = pgWidth / nodeWidth;
+                 scaleY = pgHeight / nodeHeight;
+
+                 // Use the smaller scale factor to ensure the entire node fits without distortion
+                 double scale = Math.min(scaleX, scaleY);
+
+                 // Apply scaling transformation (important!)
+                 nodeToPrint.getTransforms().add(new javafx.scene.transform.Scale(scale, scale));
+             } else {
+                  System.err.println("Warning: Could not get PageLayout. Printing with default scaling.");
+             }
+
+            // Print the (potentially scaled) node using the determined page layout
+            boolean printed = job.printPage(pageLayout, nodeToPrint); // Use layout
+
+            // *** IMPORTANT: Remove the scaling transform AFTER printing ***
+            // Otherwise, the node remains scaled on the screen.
+             if (pageLayout != null) {
+                 nodeToPrint.getTransforms().remove(nodeToPrint.getTransforms().size() - 1); // Remove the last added scale transform
+             }
+
+
+            if (printed) {
+                boolean success = job.endJob();
+                if (success) {
+                    showNotification("Printing", "Sent timetable to printer.", SUCCESS_COLOR);
+                } else {
+                    showAlert("Printing Error", "Failed to end the print job.", Alert.AlertType.ERROR);
+                }
+            } else {
+                showAlert("Printing Failed", "Could not print the timetable page.", Alert.AlertType.ERROR);
+                 // Also end the job even if printing the page failed
+                 job.endJob();
+            }
+        } else {
+             showNotification("Printing Cancelled", "Printing was cancelled by the user.", WARNING_COLOR);
+        }
+    }
 
     // --- Grid Creation and Cell Styling (No changes) ---
     private HBox createLegend() { /* ... No changes ... */
